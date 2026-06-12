@@ -37,6 +37,9 @@ Build phases get this environment automatically: the locked dependency caches
 (`HOME`, `JAVA_TOOL_OPTIONS=-Duser.home=...`), `GITLIBS`, `JAVA_HOME`,
 `JAVA_CMD`, `-Djava.io.tmpdir=$TMPDIR`, and optionally `GIT_REV`.
 
+When `src` contains a root `bb.edn`, the derived locker also runs `bb prepare`
+so Babashka deps enter the same lockfile.
+
 ## mkCljBin
 
 Builds an uberjar with the project's `:build` alias and installs:
@@ -150,8 +153,7 @@ locked = clj-helpers.lib.mkLockfile {
   lockfile = "./deps-lock.json";
 };
 # locked.commandLocker, locked.shellEnv, locked.homeDirectory,
-# locked.wrapClojure, locked.wrapPrograms
-
+# locked.wrapClojure, locked.wrapPrograms, locked.wrapBabashka
 withLocker = clj-helpers.lib.mkLocker {
   inherit pkgs;
   src = ./.;

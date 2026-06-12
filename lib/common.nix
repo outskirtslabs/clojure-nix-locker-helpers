@@ -82,6 +82,7 @@ rec {
           src;
 
       lockfileRel = lib.removePrefix "./" lockfile;
+      hasBabashkaEdn = builtins.pathExists (projectSrc + "/bb.edn");
 
       locked = lockerLib.mkLockfile {
         inherit
@@ -96,6 +97,10 @@ rec {
 
       prepCommand = lib.optionalString (prepAliases != [ ]) ''
         clojure -Srepro -X:deps prep :aliases '[${lib.concatMapStringsSep " " (a: ":" + a) prepAliases}]'
+      '';
+
+      babashkaPrepareCommand = lib.optionalString hasBabashkaEdn ''
+        bb prepare
       '';
 
       # Environment for build/check phases: locked dependency caches plus the
@@ -113,7 +118,8 @@ rec {
 
       # The locker runs the same prep and build commands as the nix build so
       # the resulting lockfile is guaranteed to cover them, plus explicit
-      # prefetches for aliases that are only exercised at check time.
+      # prefetches for aliases that are only exercised at check time and
+      # Babashka deps when the project has bb.edn.
       defaultLockCommand = ''
         export HOME="$tmp/home"
         export GITLIBS="$HOME/.gitlibs"
@@ -129,6 +135,7 @@ rec {
       + lib.concatMapStrings (a: ''
         clojure -Srepro -P -M:${a}
       '') prefetchAliases
+      + babashkaPrepareCommand
       + buildCommand
       + "\n";
 

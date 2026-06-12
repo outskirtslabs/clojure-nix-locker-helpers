@@ -31,6 +31,7 @@ export GIT_REV="lockfile-generation"
 
 clojure -Srepro -X:deps prep :aliases '[...]'   # prepAliases
 clojure -Srepro -P -M:dev:test                  # one per prefetchAliases entry
+bb prepare                                      # if bb.edn exists
 clojure -Srepro -T:build uber                   # buildCommand, run for real
 ```
 
@@ -55,7 +56,7 @@ git add deps-lock.json
 
 Regenerate whenever:
 
-- `deps.edn` (or any alias used by the build/check) changes
+- `deps.edn`, `bb.edn`, or any alias used by the build/check changes
 - the `prepAliases` / `prefetchAliases` / `buildCommand` / `checkCommand`
   arguments change in a way that needs new dependencies
 - you bump the JDK in a way that changes resolved artifacts
@@ -76,5 +77,5 @@ Some projects need more, e.g. forcing prep of a particular git dependency or
 warming nested builds (see busker for an extreme example). Two options:
 
 - `lockCommand`: replace the derived command entirely; you are responsible
-  for covering prep, prefetch, and build.
+  for covering prep, prefetch, Babashka deps, and build.
 - Drop down to `mkLockfile` / `mkLocker` and write the package by hand.

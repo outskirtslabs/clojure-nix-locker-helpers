@@ -23,8 +23,8 @@ rec {
       clojure = pkgs.clojure.override { inherit jdk; };
     };
 
-  # Returns clojure-nix-locker's lockfile attrset:
-  # { commandLocker, homeDirectory, shellEnv, wrapClojure, wrapPrograms }
+  # Returns clojure-nix-locker's lockfile attrset, plus helper wrappers:
+  # { commandLocker, homeDirectory, shellEnv, wrapClojure, wrapPrograms, wrapBabashka }
   mkLockfile =
     {
       pkgs,
@@ -34,17 +34,25 @@ rec {
       mavenRepos ? defaultMavenRepos,
       extraPrepInputs ? [ pkgs.git ],
     }:
-    (import "${clojure-nix-locker}/default.nix" {
-      pkgs = mkLockerPkgs { inherit pkgs jdk; };
-    }).lockfile
-      {
-        inherit
-          src
-          lockfile
-          mavenRepos
-          extraPrepInputs
-          ;
-      };
+    let
+      locked =
+        (import "${clojure-nix-locker}/default.nix" {
+          pkgs = mkLockerPkgs { inherit pkgs jdk; };
+        }).lockfile
+          {
+            inherit
+              src
+              lockfile
+              mavenRepos
+              extraPrepInputs
+              ;
+          };
+    in
+    locked
+    // {
+      wrapBabashka =
+        locked.wrapBabashka or (babashka: locked.wrapPrograms "locked-babashka" [ "${babashka}/bin/bb" ]);
+    };
 
   # Like mkLockfile, but also builds the locker script from a command.
   mkLocker =
@@ -74,6 +82,7 @@ rec {
       inherit (locked)
         homeDirectory
         shellEnv
+        wrapBabashka
         wrapClojure
         wrapPrograms
         ;

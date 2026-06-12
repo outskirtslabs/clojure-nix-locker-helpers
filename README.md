@@ -87,7 +87,8 @@ by deriving the locker script from the same arguments as the derivation:
 
 1. `clojure -X:deps prep :aliases '[...]'` for `prepAliases`
 2. `clojure -P -M:<alias>` for each entry in `prefetchAliases`
-3. `buildCommand`, executed for real
+3. `bb prepare` when the source root contains `bb.edn`
+4. `buildCommand`, executed for real
 
 If you override `lockCommand`, you take this guarantee into your own hands.
 
