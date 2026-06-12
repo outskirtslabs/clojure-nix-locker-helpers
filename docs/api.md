@@ -167,9 +167,8 @@ withLocker = clj-helpers.lib.mkLocker {
 
 - `cleanCljSource { pkgs, src, extraExcludes ? [ ] }`: `cleanSourceWith`
   filter excluding `.git` anywhere plus these root-relative paths: `target`,
-  `.cpcache`, `.clj-kondo/.cache`, `.clj-kondo/imports`,
-  `.clj-kondo/inline-configs`, `.clojure-mcp`, `.direnv`, `.envrc`,
-  `.github`, `.lsp`, `.nrepl-port`, `.tmuxb_session`, `extra`,
-  `node_modules`, `result`.
+  `.cpcache`, `.clj-kondo/.cache`, `.clojure-mcp`, `.direnv`,
+  `.envrc`, `.github`, `.lsp`, `.nrepl-port`, `.tmuxb_session`,
+  `extra`, `node_modules`, `result`.
 - `gitRev self`: `self.rev`, else `self.dirtyRev`, else `"dirty"`.
 - `defaultMavenRepos`: maven central and clojars.

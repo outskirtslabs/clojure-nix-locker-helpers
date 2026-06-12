@@ -10,8 +10,6 @@ let
   # the path itself and, if it is a directory, everything below it.
   defaultExcludePaths = [
     ".clj-kondo/.cache"
-    ".clj-kondo/imports"
-    ".clj-kondo/inline-configs"
     ".clojure-mcp"
     ".cpcache"
     ".direnv"

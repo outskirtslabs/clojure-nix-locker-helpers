@@ -20,6 +20,10 @@ let
     buildCommand = "true";
   };
   libJar = cljLib.mkCljLib (fixtureArgs // { name = "cljdemo-lib"; });
+  cleanFixtureSrc = cljLib.cleanCljSource {
+    inherit pkgs;
+    src = ./fixture;
+  };
   lowLevelLockfile = cljLib.mkLockfile {
     inherit pkgs;
     src = ./fixture-bb;
@@ -68,6 +72,13 @@ in
     assert builtins.length cli == 5;
     assert pkgs.lib.hasSuffix "/bin/java" (builtins.head cli);
     pkgs.writeText "mkCljCli-ok" (builtins.concatStringsSep " " cli);
+
+  clean-source-keeps-clj-kondo-config = pkgs.runCommand "clean-source-keeps-clj-kondo-config" { } ''
+    test -f "${cleanFixtureSrc}/.clj-kondo/imports/example/config.edn"
+    test -f "${cleanFixtureSrc}/.clj-kondo/inline-configs/example.ns/config.edn"
+    test ! -e "${cleanFixtureSrc}/.clj-kondo/.cache/generated.edn"
+    touch $out
+  '';
 
   locker-omits-bb-prepare-without-bb-edn =
     pkgs.runCommand "locker-omits-bb-prepare-without-bb-edn" { }
